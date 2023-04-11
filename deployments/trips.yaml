@@ -1,22 +1,22 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: poi
+  name: trips
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: poi
+      app: trips
   template:
     metadata:
       labels:
-        app: poi
+        app: trips
     spec:
       nodeSelector:
         "kubernetes.io/os": linux
       containers:
-      - name: poi
-        image: registrykhg5395.azurecr.io/tripinsights/poi:1.0
+      - name: trips
+        image: registrykhg5395.azurecr.io/tripinsights/trips:1.0
         env:
         - name: SQL_USER
           value: "sqladminkHg5395"
@@ -29,12 +29,6 @@ spec:
           value: "sqlserverkhg5395.database.windows.net"
         - name: SQL_DBNAME
           value: "mydrivingDB"
-        - name: WEB_PORT
-          value: "8080"
-        - name: WEB_SERVER_BASE_URI
-          value: "http://localhost:8080"
-        - name: ASPNETCORE_ENVIRONMENT
-          value: "Development"
         resources:
           requests:
             cpu: 100m
@@ -44,16 +38,16 @@ spec:
             memory: 256Mi
         ports:
         - containerPort: 80
-          name: poi
+          name: trips
 ---
 apiVersion: v1
 kind: Service
 metadata:
-  name: poi-service
+  name: trips-service
 spec:
   ports:
   - port: 80
     protocol: TCP
     targetPort: 80
   selector:
-    app: poi
+    app: trips
