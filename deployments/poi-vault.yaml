@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: poi
+  namespace: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: poi
+  template:
+    metadata:
+      labels:
+        app: poi
+    spec:
+      containers:
+      - name: poi
+        image: registrykhg5395.azurecr.io/tripinsights/poi:1.0
+        command:
+          - "/bin/sleep"
+          - "10000"
+        env:
+        - name: SQL_USER
+          value: "sqladminkHg5395"
+        - name: SQL_PASSWORD
+          value: "qR0ml4Yi3"
+        - name: SQL_SERVER
+          value: "sqlserverkhg5395.database.windows.net"
+        - name: SQL_DBNAME
+          value: "mydrivingDB"
+        - name: WEB_PORT
+          value: "8080"
+        - name: WEB_SERVER_BASE_URI
+          value: "http://localhost:8080"
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Development"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        ports:
+        - containerPort: 80
+          name: poi
+        volumeMounts:
+        - name: secrets-store01-inline
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
+      volumes:
+      - name: secrets-store01-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "azure-kvname-system-msi"
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: poi-service
+  namespace: api
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: poi

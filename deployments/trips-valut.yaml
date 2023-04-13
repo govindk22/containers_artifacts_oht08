@@ -1,0 +1,66 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: trips
+  namespace: api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: trips
+  template:
+    metadata:
+      labels:
+        app: trips
+    spec:
+      nodeSelector:
+        "kubernetes.io/os": linux
+      volumes:
+      - name: secrets-store01-inline
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: "azure-kvname-system-msi"
+      containers:
+      - name: trips
+        volumeMounts:
+        - name: secrets-store01-inline
+          mountPath: "/mnt/secrets-store"
+          readOnly: true
+        image: registrykhg5395.azurecr.io/tripinsights/trips:1.0
+        env:
+        - name: SQL_USER
+          value: "sqladminkHg5395"
+        - name: SQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: sqlpassword
+              key: sqlpassword
+        - name: SQL_SERVER
+          value: "sqlserverkhg5395.database.windows.net"
+        - name: SQL_DBNAME
+          value: "mydrivingDB"
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 250m
+            memory: 256Mi
+        ports:
+        - containerPort: 80
+          name: trips
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: trips-service
+  namespace: api
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: trips
