@@ -19,18 +19,6 @@ spec:
       containers:
       - name: userprofile
         image: registrykhg5395.azurecr.io/tripinsights/userprofile:1.0
-        env:
-        - name: SQL_USER
-          value: "sqladminkHg5395"
-        - name: SQL_PASSWORD
-          valueFrom:
-            secretKeyRef:
-              name: sqldbsecret
-              key: sqlpassword
-        - name: SQL_SERVER
-          value: "sqlserverkhg5395.database.windows.net"
-        - name: SQL_DBNAME
-          value: "mydrivingDB"
         resources:
           requests:
             cpu: 100m
@@ -41,6 +29,17 @@ spec:
         ports:
         - containerPort: 80
           name: userprofile
+        volumeMounts:
+        - name: secrets-store
+          mountPath: "/secrets"
+          readOnly: true
+      volumes:
+      - name: secrets-store
+        csi:
+          driver: secrets-store.csi.k8s.io
+          readOnly: true
+          volumeAttributes:
+            secretProviderClass: keyvault-sql
 ---
 apiVersion: v1
 kind: Service

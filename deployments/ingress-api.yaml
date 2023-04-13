@@ -10,7 +10,7 @@ spec:
   rules:
   - http:
       paths:
-      - path: /api/poi/
+      - path: /api/poi
         pathType: Prefix
         backend:
           service:
@@ -19,7 +19,7 @@ spec:
               number: 80
   - http:
       paths:
-      - path: /api/user/
+      - path: /api/user
         pathType: Prefix
         backend:
           service:
@@ -28,7 +28,7 @@ spec:
               number: 80
   - http:
       paths:
-      - path: /api/trips/
+      - path: /api/trips
         pathType: Prefix
         backend:
           service:
@@ -37,7 +37,7 @@ spec:
               number: 80
   - http:
       paths:
-      - path: /api/user-java/
+      - path: /api/user-java
         pathType: Prefix
         backend:
           service:
