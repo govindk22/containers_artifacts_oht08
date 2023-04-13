@@ -65,6 +65,7 @@ metadata:
   name: poi-service
   namespace: api
 spec:
+  type: LoadBalancer
   ports:
   - port: 80
     protocol: TCP

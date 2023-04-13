@@ -29,9 +29,9 @@ spec:
         - name: SQL_DBNAME
           value: "mydrivingDB"
         - name: WEB_PORT
-          value: "8080"
+          value: "80"
         - name: WEB_SERVER_BASE_URI
-          value: "http://localhost:8080"
+          value: "http://localhost:80"
         - name: ASPNETCORE_ENVIRONMENT
           value: "Development"
         resources:
@@ -43,7 +43,6 @@ spec:
             memory: 256Mi
         ports:
         - containerPort: 80
-          name: poi
 ---
 apiVersion: v1
 kind: Service
@@ -51,6 +50,7 @@ metadata:
   name: poi-service
   namespace: api
 spec:
+  type: LoadBalancer
   ports:
   - port: 80
     protocol: TCP
