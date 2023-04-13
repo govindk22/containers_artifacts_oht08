@@ -23,7 +23,10 @@ spec:
         - name: SQL_USER
           value: "sqladminkHg5395"
         - name: SQL_PASSWORD
-          value: "qR0ml4Yi3"
+          valueFrom:
+            secretKeyRef:
+              name: sqlpassword
+              key: sqlpassword
         - name: SQL_SERVER
           value: "sqlserverkhg5395.database.windows.net"
         - name: SQL_DBNAME
